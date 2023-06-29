@@ -2,9 +2,9 @@ package protocols
 
 import "time"
 
-type Dir struct {
+type Site struct {
 	Id       int64     `json:"id"`
-	Hostname string    `json:"hostname"`
+	HostIp   string    `json:"hostip"`
 	Domain   string    `json:"domain"`
 	Lastseen time.Time `json:"lastseen"`
 }
@@ -13,10 +13,10 @@ type File struct {
 	Id       int64     `json:"id"`
 	Name     string    `json:"name"`
 	Url      string    `json:"url"`
-	Page     string    `json:"page"`
+	SiteId   int64     `json:"siteId"`
 	Lastseen time.Time `json:"lastseen"`
 }
 type Database struct {
-	Dirs  []Dir
+	Sites []Site
 	Files []File
 }
