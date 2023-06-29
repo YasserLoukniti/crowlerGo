@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"net"
 	"os"
+
+	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
 
 const (
@@ -24,8 +27,15 @@ func main() {
 		println("Dial failed:", err.Error())
 		os.Exit(1)
 	}
-
-	_, err = conn.Write([]byte("This is a message"))
+	//GetSiteRequest
+	getSiteRequest := protocols.GetSiteRequest{}
+	getSiteRequest.Command = "getSite"
+	getSiteRequest_json, err := json.Marshal(getSiteRequest)
+	if err != nil {
+		println("marshal failed:", err.Error())
+		os.Exit(1)
+	}
+	_, err = conn.Write(getSiteRequest_json)
 	if err != nil {
 		println("Write data failed:", err.Error())
 		os.Exit(1)

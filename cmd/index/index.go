@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -16,8 +17,9 @@ const (
 	TYPE = "tcp"
 )
 
+var database protocols.Database
+
 func main() {
-	database := protocols.Database{}
 	database.Sites = append(database.Sites, protocols.Site{
 		Id:     1,
 		HostIp: "212.27.63.171",
@@ -53,11 +55,17 @@ func main() {
 
 }
 func handleRequest(conn net.Conn) {
-	// incoming request
 	buffer := make([]byte, 1024)
-	_, err := conn.Read(buffer)
+	nb, err := conn.Read(buffer)
 	if err != nil {
 		log.Fatal(err)
+	}
+	fmt.Printf("json server => : %s\n", buffer[0:nb])
+	cleanBuffer := buffer[0:nb]
+	req := protocols.GenericRequest{}
+	json.Unmarshal([]byte(cleanBuffer), &req)
+	if req.Command == "getSite" {
+		getSites(cleanBuffer, req, conn, database)
 	}
 
 	// write data to response
