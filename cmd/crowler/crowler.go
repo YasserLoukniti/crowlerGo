@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net"
 	"os"
 
@@ -43,13 +44,13 @@ func main() {
 
 	// buffer to get data
 	received := make([]byte, 1024)
-	_, err = conn.Read(received)
+	nb, err := conn.Read(received)
 	if err != nil {
-		println("Read data failed:", err.Error())
-		os.Exit(1)
+		log.Fatal(err)
 	}
-
-	println("Received message:", string(received))
+	cleanReceived := received[0:nb]
+	// TODO: Visiter le site
+	println("Received message:", string(cleanReceived))
 
 	conn.Close()
 }

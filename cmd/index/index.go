@@ -56,12 +56,7 @@ func main() {
 }
 func handleRequest(conn net.Conn) {
 	buffer := make([]byte, 1024)
-	nb, err := conn.Read(buffer)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("json server => : %s\n", buffer[0:nb])
-	cleanBuffer := buffer[0:nb]
+	cleanBuffer := newFunction(conn, buffer)
 	req := protocols.GenericRequest{}
 	json.Unmarshal([]byte(cleanBuffer), &req)
 	if req.Command == "getSite" {
@@ -75,4 +70,13 @@ func handleRequest(conn net.Conn) {
 
 	// close conn
 	conn.Close()
+}
+
+func newFunction(conn net.Conn, buffer []byte) []byte {
+	nb, err := conn.Read(buffer)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cleanBuffer := buffer[0:nb]
+	return cleanBuffer
 }
