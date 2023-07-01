@@ -51,6 +51,11 @@ func main() {
 	cleanReceived := received[0:nb]
 	// TODO: Visiter le site
 	println("Received message:", string(cleanReceived))
+	listRes := protocols.GetSiteResponse{}
+	json.Unmarshal([]byte(cleanReceived), &listRes)
+	if listRes.Command == "getSite" && listRes.Status == 200 {
+		getFileRequest(conn)
+	}
 
 	conn.Close()
 }
