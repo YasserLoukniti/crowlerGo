@@ -16,7 +16,7 @@ func createFile(buffer []byte, database protocols.Database, responseChan chan<- 
 
 	last := len(database.Files)
 	createFileReq.File.Id = int64(last)
-
+	database.Files = append(database.Files, createFileReq.File)
 	res.Command = "createFile"
 	res.File = createFileReq.File
 	res.Status = 200

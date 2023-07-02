@@ -69,6 +69,8 @@ func handleRequest(conn net.Conn) {
 		go updateSite(cleanBuffer, database, responseChan)
 	case "createFile":
 		go createFile(cleanBuffer, database, responseChan)
+	case "createSite":
+		go createSite(cleanBuffer, database, responseChan)
 	default:
 		fmt.Println("Command not found")
 	}
