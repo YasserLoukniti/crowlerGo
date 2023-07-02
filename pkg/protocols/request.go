@@ -21,5 +21,5 @@ type CreateOrUpdateFileRequest struct {
 }
 type GetFileRequest struct {
 	GenericRequest
-	File
+	SiteId int64 `json:"siteId"`
 }

@@ -9,10 +9,11 @@ import (
 	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
 
-func getFileRequest(params string, results chan<- string) {
+func getFileRequest(results chan<- string, siteId int64) {
 	con, err := net.Dial("tcp", "localhost:19200")
 	getFileRequest := protocols.GetFileRequest{}
 	getFileRequest.Command = "getFile"
+	getFileRequest.SiteId = siteId
 	getFileRequest_json, err := json.Marshal(getFileRequest)
 	if err != nil {
 		println("marshal failed:", err.Error())

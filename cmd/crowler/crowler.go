@@ -58,9 +58,10 @@ func main() {
 		json.Unmarshal([]byte(cleanReceived), &listRes)
 		if listRes.Command == "getSite" && listRes.Status == 200 {
 			println("Entered")
-			// TODO: Visiter le site
+			// Visiter le site et sauvgarde fichiers
 			go visitSite(listRes.Sites[0], results)
-			go getFileRequest("any", results)
+			// get files
+			go getFileRequest(results, listRes.Sites[0].Id)
 			// Update Site
 			go updateSiteRequest("any", listRes.Sites[0], results)
 		} else {
