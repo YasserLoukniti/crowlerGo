@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -17,6 +18,7 @@ const (
 
 func main() {
 	tcpServer, err := net.ResolveTCPAddr(TYPE, HOST+":"+PORT)
+	results := make(chan string)
 
 	if err != nil {
 		println("ResolveTCPAddr failed:", err.Error())
@@ -28,6 +30,7 @@ func main() {
 		println("Dial failed:", err.Error())
 		os.Exit(1)
 	}
+
 	//GetSiteRequest
 	getSiteRequest := protocols.GetSiteRequest{}
 	getSiteRequest.Command = "getSite"
@@ -54,7 +57,13 @@ func main() {
 	listRes := protocols.GetSiteResponse{}
 	json.Unmarshal([]byte(cleanReceived), &listRes)
 	if listRes.Command == "getSite" && listRes.Status == 200 {
-		getFileRequest(conn)
+		println("Entered")
+		go getFileRequest("any", results)
+	}
+
+	for res := range results {
+		println("Waiting For Results")
+		fmt.Println("Result:", res)
 	}
 
 	conn.Close()

@@ -6,7 +6,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"time"
 
 	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
@@ -52,27 +51,34 @@ func main() {
 		}
 		go handleRequest(conn)
 	}
-
 }
+
 func handleRequest(conn net.Conn) {
 	buffer := make([]byte, 1024)
-	cleanBuffer := newFunction(conn, buffer)
+	cleanBuffer := cleaningBuffer(conn, buffer)
 	req := protocols.GenericRequest{}
 	json.Unmarshal([]byte(cleanBuffer), &req)
-	if req.Command == "getSite" {
-		getSites(cleanBuffer, req, conn, database)
+
+	responseChan := make(chan []byte)
+	switch req.Command {
+	case "getSite":
+		go getSites(cleanBuffer, database, responseChan)
+	case "getFile":
+		go getFile(cleanBuffer, database, responseChan)
+	default:
+		fmt.Println("Command not found")
 	}
 
-	// write data to response
-	time := time.Now().Format(time.ANSIC)
-	responseStr := fmt.Sprintf("Your message is: %v. Received time: %v", string(buffer[:]), time)
-	conn.Write([]byte(responseStr))
+	response := <-responseChan
 
-	// close conn
+	// write response to connection
+	conn.Write([]byte(response))
+
+	// close connection
 	conn.Close()
 }
 
-func newFunction(conn net.Conn, buffer []byte) []byte {
+func cleaningBuffer(conn net.Conn, buffer []byte) []byte {
 	nb, err := conn.Read(buffer)
 	if err != nil {
 		log.Fatal(err)

@@ -3,20 +3,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"os"
 
 	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
 
-func getFile(buffer []byte, req protocols.GenericRequest, conn net.Conn, database protocols.Database) {
+func getFile(buffer []byte, database protocols.Database, responseChan chan<- []byte) {
 
-	fmt.Printf("Success => : %v\n", req)
-	listReq := protocols.GetSiteRequest{}
+	listReq := protocols.GetFileRequest{}
 	json.Unmarshal([]byte(buffer), &listReq)
-	res := protocols.GetSiteResponse{}
-	res.Command = "getSite"
-	res.Sites = database.Sites
+	res := protocols.GetFileResponse{}
+	res.Command = "getFile"
+	res.Files = database.Files
 	res.Status = 200
 	fmt.Printf("res => : %v\n", res)
 	listres_json, err := json.Marshal(res)
@@ -25,6 +23,6 @@ func getFile(buffer []byte, req protocols.GenericRequest, conn net.Conn, databas
 		os.Exit(1)
 	}
 
-	conn.Write(listres_json)
+	responseChan <- listres_json
 
 }
