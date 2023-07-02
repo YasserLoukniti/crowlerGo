@@ -53,17 +53,18 @@ func main() {
 			log.Fatal(err)
 		}
 		cleanReceived := received[0:nb]
-		// TODO: Visiter le site
 		println("Received message:", string(cleanReceived))
 		listRes := protocols.GetSiteResponse{}
 		json.Unmarshal([]byte(cleanReceived), &listRes)
 		if listRes.Command == "getSite" && listRes.Status == 200 {
 			println("Entered")
+			// TODO: Visiter le site
+			go visitSite(listRes.Sites[0], results)
 			go getFileRequest("any", results)
+			// Update Site
 			go updateSiteRequest("any", listRes.Sites[0], results)
-			time.Sleep(1 * time.Second)
 		} else {
-			time.Sleep(20 * time.Second)
+			time.Sleep(5 * time.Second)
 		}
 
 		for res := range results {

@@ -9,10 +9,11 @@ import (
 	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
 
-func createFileRequest(params string, results chan<- string) {
+func createFileRequest(file protocols.File, results chan<- string) {
 	con, err := net.Dial("tcp", "localhost:19200")
 	createFileRequest := protocols.CreateOrUpdateFileRequest{}
 	createFileRequest.Command = "createFile"
+	createFileRequest.File = file
 	createFileRequest_json, err := json.Marshal(createFileRequest)
 	if err != nil {
 		println("marshal failed:", err.Error())
@@ -29,9 +30,8 @@ func createFileRequest(params string, results chan<- string) {
 	if err != nil {
 		log.Fatal("errrr ", err.Error())
 	}
-	listFileRes := protocols.CreateOrUpdateFileRequest{}
+	listFileRes := protocols.CreateOrUpdateFileResponse{}
 	json.Unmarshal([]byte(received[0:nb]), &listFileRes)
 	con.Close()
 	results <- string(received[0:nb])
-	close(results)
 }
