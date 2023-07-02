@@ -65,6 +65,8 @@ func handleRequest(conn net.Conn) {
 		go getSites(cleanBuffer, database, responseChan)
 	case "getFile":
 		go getFile(cleanBuffer, database, responseChan)
+	case "updateSite":
+		go updateSite(cleanBuffer, database, responseChan)
 	default:
 		fmt.Println("Command not found")
 	}

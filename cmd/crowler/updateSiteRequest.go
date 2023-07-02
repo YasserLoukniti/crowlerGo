@@ -5,20 +5,23 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"github.com/YasserLoukniti/crowlerGo/pkg/protocols"
 )
 
-func createFileRequest(params string, results chan<- string) {
+func updateSiteRequest(params string, site protocols.Site, results chan<- string) {
 	con, err := net.Dial("tcp", "localhost:19200")
-	createFileRequest := protocols.CreateOrUpdateFileRequest{}
-	createFileRequest.Command = "createFile"
-	createFileRequest_json, err := json.Marshal(createFileRequest)
+	updateSiteRequest := protocols.CreateOrUpdateSiteRequest{}
+	updateSiteRequest.Command = "updateSite"
+	site.Lastseen = time.Now()
+	updateSiteRequest.Site = site
+	updateSiteRequest_json, err := json.Marshal(updateSiteRequest)
 	if err != nil {
 		println("marshal failed:", err.Error())
 		os.Exit(1)
 	}
-	_, err = con.Write(createFileRequest_json)
+	_, err = con.Write(updateSiteRequest_json)
 	if err != nil {
 		println("Write data failed:", err.Error())
 		os.Exit(1)
@@ -29,9 +32,8 @@ func createFileRequest(params string, results chan<- string) {
 	if err != nil {
 		log.Fatal("errrr ", err.Error())
 	}
-	listFileRes := protocols.CreateOrUpdateFileRequest{}
-	json.Unmarshal([]byte(received[0:nb]), &listFileRes)
+	updateSiteRes := protocols.CreateOrUpdateSiteResponse{}
+	json.Unmarshal([]byte(received[0:nb]), &updateSiteRes)
 	con.Close()
 	results <- string(received[0:nb])
-	close(results)
 }

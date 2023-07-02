@@ -33,4 +33,5 @@ func getFileRequest(params string, results chan<- string) {
 	json.Unmarshal([]byte(received[0:nb]), &listFileRes)
 	con.Close()
 	results <- string(received[0:nb])
+	close(results)
 }
